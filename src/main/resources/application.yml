@@ -1,0 +1,86 @@
+server:
+  port: 8080
+# Spring Config
+spring:
+  application:
+    name: demo
+  mvc:
+    servlet:
+      path: /
+    locale: zh_CN
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+  datasource:
+    name: dataSource
+    initialization-mode: never
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    schema: classpath:db/schema-h2.sql
+#    data: classpath:db/data-h2.sql
+    url: jdbc:mysql://localhost:3306/test?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    username: root
+    password: root
+  #session
+  #配合为redis表示开启redis会话共享,none单机
+  #spirngboot默认就是使用redis方式，也可以写redis
+  session:
+    store-type: none
+    redis:
+      namespace: evidence
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+# Mybatis Plus
+mybatis-plus:
+  mapper-locations: classpath*:mybatis/*.xml
+  global-config:
+    db-config:
+      insert-strategy: ignored
+      update-strategy: ignored
+      select-strategy: ignored
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler
+  typeEnumsPackage: com.loki.demo.enums
+logging:
+  level:
+    com.loki.demo: debug
+    io.swagger.models.parameters.AbstractSerializableParameter: error
+# Swagger
+swagger:
+  host: localhost:8080
+  group: demo-rest
+  base-package: com.loki.demo.controller
+  titile: rest接口
+  desc: api地址:https://${swagger.host}/swagger-ui.html
+  service-url: localhost:8080
+  version: 1.0.0
+# ShiroJWT
+fastdep:
+  shiro-jwt:
+    filter: #shiro过滤规则
+      portal:
+        path: /portal/**
+        role: jwt # jwt为需要进行token校验
+      pages:
+        path: /pages/**/**
+        role: anon # anon为无需校验
+    secret: "6Dx8SIuaHXJYnpsG18SSpjPs50lZcT52" # jwt秘钥
+    expireTime: 7200000 # token有效期
+#    prefix: "Bearer "  # token校验时的前缀
+#    signPrefix: "Bearer " # token生成签名的前缀
+#    header: "Authorization" # token校验时的header头
+#    以下对应为shiro配置参数，无特殊需求无需配置
+#    loginUrl:
+#    successUrl:
+#    unauthorizedUrl:
+#    filterChainDefinitions:
